@@ -1,8 +1,6 @@
 FORGE
   remote: https://forgeapi.puppetlabs.com
   specs:
-    OpenConceptConsulting-nslcd (0.2.0)
-      puppetlabs-stdlib (>= 0)
     crayfishx-firewalld (3.1.8)
       puppetlabs-stdlib (< 5.0.0, >= 4.2.0)
     jlambert121-trusted_ca (1.1.0)
@@ -74,7 +72,6 @@ PATH
       puppetlabs-stdlib (>= 0)
 
 DEPENDENCIES
-  OpenConceptConsulting-nslcd (>= 0)
   crayfishx-firewalld (>= 0)
   ebrc-ebrc_java (>= 0)
   ebrc-ebrc_jenkins (>= 0)
