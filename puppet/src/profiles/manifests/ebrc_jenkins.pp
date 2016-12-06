@@ -5,11 +5,13 @@ class profiles::ebrc_jenkins {
   include ::profiles::base
   include ::profiles::ebrc_java_stack
   include ::profiles::local_home
+  include ::profiles::jenkins_joeuser_ssh
   include ::ebrc_jenkins
 
   Class['::profiles::ebrc_java_stack'] ->
   Class['::profiles::local_home'] ->
-  Class['::ebrc_jenkins']
+  Class['::ebrc_jenkins'] ->
+  Class['::profiles::jenkins_joeuser_ssh']
 
   $jenkins_instances = hiera('ebrc_jenkins::instances')
   $jenkins_instances.each |$instance, $conf| {
