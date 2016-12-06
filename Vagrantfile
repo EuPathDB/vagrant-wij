@@ -1,3 +1,11 @@
+[
+  { :name => 'vagrant-librarian-puppet', :version => '>= 0.9.2' },
+].each do |plugin|
+  if not Vagrant.has_plugin?(plugin[:name], plugin[:version])
+    raise "#{plugin[:name]} #{plugin[:version]} is required. Please run `vagrant plugin install #{plugin[:name]}`"
+  end
+end
+
 Vagrant.configure(2) do |config|
 
   config.vm.box_url = 'http://software.apidb.org/vagrant/webdev.json'
@@ -15,10 +23,10 @@ Vagrant.configure(2) do |config|
   config.vm.network :private_network, type: :dhcp
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
-  #jdwp_port = 8000
-  #config.vm.network "forwarded_port", guest: jdwp_port, host: jdwp_port
-  #config.vm.provision 'shell',
-  # inline: "firewall-cmd --add-rich-rule=\"rule port port=#{jdwp_port} protocol='tcp' accept\""
+  if ! File.exist?(File.dirname(__FILE__) + '/nolibrarian')
+    config.librarian_puppet.puppetfile_dir = 'puppet'
+    config.librarian_puppet.destructive = false
+  end
 
   if Vagrant.has_plugin?('landrush')
     config.landrush.enabled = true

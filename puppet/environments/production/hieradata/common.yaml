@@ -1,10 +1,10 @@
 ---
 ebrc_jenkins::user_home: /usr/local/home/jenkins
 ebrc_jenkins::instances:
-  CI:
-    version: 2.34
-    http_port: 9181
-    jmx_port:  9120
+  WS:
+    version: 2.35
+    http_port: 9171
+    jmx_port:  9110
 
 ebrc_ca::cacert: apidb-ca-rsa.crt
 ebrc_java::java_home: /usr/java/jdk1.8.0_92
@@ -12,8 +12,70 @@ ebrc_java::packages:
   - jdk1.8.0_112
 ebrc_java::java_home: /usr/java/jdk1.8.0_112
 ebrc_java::default_ver: /usr/java/jdk1.8.0_112
+ebrc_maven::packages:
+  - maven-3.3.3
+ebrc_maven::maven_home: /usr/java/maven-3.3.3
 
 java_keystore_target: /etc/pki/tls/certs/cacerts
-java_keystore_passwd: graeo5locza
+java_keystore_passwd: eb5b681c
 
 local_home: /usr/local/home
+
+irods::globals::use_ssl: true
+irods::globals::ssl_certificate_chain_file_source: "puppet:///modules/profiles/ssl/%{facts.hostname}-rsa.crt"
+irods::globals::ssl_certificate_key_file_source: "puppet:///modules/profiles/ssl/%{facts.hostname}-rsa.key"
+
+irods::globals::install_dev_pkgs: false
+
+irods::globals::icat_server: wij.vm
+irods::globals::icat_server_zone: ebrc
+irods::globals::icat_admin_user: icatadmin
+irods::globals::icat_admin_pass: passWORD
+irods::globals::srv_negotiation_key: fbb4c4fd185e3a98f8715ff5c1c86715
+irods::globals::ctrl_plane_key: ca2ad0abf0faa703cf0829af99465ac9
+irods::globals::srv_zone_key: e83ac54fe6d5d66f24d16644ce72d9ae
+
+irods::icat::db_vendor: postgres
+irods::icat::db_name: ICAT
+irods::icat::db_user: irods
+irods::icat::db_password: passWORD
+irods::icat::db_srv_host: localhost
+irods::icat::re_rulebase_set: ['ebrc', 'core']
+
+irods::icommands:
+  - { exec: mkresc, resc: ebrcResc, type: passthru }
+  - { exec: mkresc, resc: rr1Resc, type: roundrobin }
+  - { exec: mkresc, resc: data_7k_001, type: unixfilesystem, path: 'wij.vm:/srv/irods/vault_7k_001' }
+  - { exec: mkresc, resc: data_7k_002, type: unixfilesystem, path: 'wij.vm:/srv/irods/vault_7k_002' }
+  - { exec: addchildtoresc, resc: rr1Resc, chld: data_7k_001 }
+  - { exec: addchildtoresc, resc: rr1Resc, chld: data_7k_002 }
+  - { exec: addchildtoresc, resc: ebrcResc, chld: rr1Resc }
+  - { exec: mkuser, user: wrkspuser, type: rodsuser, password: passWORD }
+  - { exec: mkuser, user: mheiges,   type: rodsuser, password: passWORD }
+  - { exec: mkgroup, group: wrkspGroup }
+  - { exec: mkgroup, group: staffGroup }
+  - { exec: atg, group: wrkspGroup, user: wrkspuser }
+  - { exec: atg, group: staffGroup, user: mheiges }
+  - { exec: imkdir, collection: /ebrc/workspaces }
+  - { exec: ichmod, action: inherit,                   collOrDataObj: /ebrc/workspaces }
+  - { exec: ichmod, action: own,     user: wrkspuser,  collOrDataObj: /ebrc/workspaces }
+  - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc/workspaces }
+  - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc }
+
+
+# nslcd::ldap_uris: see sensitive.yaml
+# nslcd::ldap_ssl: see sensitive.yaml
+# nslcd::ldap_filters: see sensitive.yaml
+# nslcd::ldap_binddn:  see sensitive.yaml
+# nslcd::ldap_bindpw:  see sensitive.yaml
+
+postgresql::server::postgres_password: PASSweird
+
+users_irods:
+    irods:
+        ensure: present
+        uid: 400
+        gid: 400
+        managehome: false
+        home: /var/lib/irods
+        shell: /bin/bash
