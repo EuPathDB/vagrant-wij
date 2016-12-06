@@ -79,7 +79,7 @@ You should refer to Landrush and Vagrant documentation and related online forums
 Usage
 =======
 
-    git clone git@github.com:EuPathDB/vagrant-wij.git
+    git clone https://github.com/EuPathDB/vagrant-wij.git
 
     cd vagrant-wij
 
