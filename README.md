@@ -135,6 +135,7 @@ Listed as `username/password`
 
           PGPASSWORD=passWORD psql -U irods -h localhost ICAT
 
+**_Note: iRODS on this virtual machine is not configured for LDAP authentication._**
 
 resources
 ---------
