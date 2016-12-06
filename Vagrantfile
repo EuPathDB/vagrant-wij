@@ -45,9 +45,9 @@ Vagrant.configure(2) do |config|
     owner: 'root', group: 'root'
 
   config.vm.provision :puppet do |puppet|
-    puppet.environment = 'production'
+    puppet.environment = 'savm'
     puppet.environment_path = 'puppet/environments'
-    puppet.manifests_path = 'puppet/environments/production/manifests'
+    puppet.manifests_path = 'puppet/environments/savm/manifests'
     puppet.manifest_file = 'site.pp'
     puppet.hiera_config_path = 'puppet/hiera.yaml'
     #puppet.options = ['--debug --trace --verbose']
