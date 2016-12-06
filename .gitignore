@@ -9,3 +9,4 @@ puppet/.librarian
 nolibrarian
 *.rpmsave
 *.rpmnew
+puppet/environments/production
