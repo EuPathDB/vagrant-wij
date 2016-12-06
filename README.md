@@ -200,4 +200,35 @@ Jenkins Layout
 Logging is at `/var/log/jenkins/WS.log`
 
 
+Example Node Setup
+---------
+
+You can run jobs on the master but you may want to run jobs on a
+separate node, especially if you have separate VM that is already
+provisioned with the software dependencies of your jobs.
+
+Use Jenkins' web interface to add a configure the node.
+
+*UI Navigation Guidance for Add Node.*
+
+        Manage Jenkins
+          Manage Nodes
+            New Nodes
+              Name: webdev <or your choice>
+              # of executors 1 <or your choice>
+              Remote root directory /var/tmp <or your choice>
+              Launch method: Launch slave agents on Unix machines via SSH
+              Host: localhost
+              Credentials: joeuser <see next Guidance below for adding joeuser>
+              <remaining options can be left empty for now>
+
+*Guidance for Add Credentials.*
+
+          Kind: SSH Username with private key
+          Scope: System
+          Username: joeuser
+          Private Key: From the Jenkins master ~/.ssh
+          Passphrase: <blank>
+          Id: <blank>
+          Description: <your choice>
 
