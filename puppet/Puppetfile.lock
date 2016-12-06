@@ -23,14 +23,14 @@ FORGE
       puppetlabs-stdlib (>= 3.0.0)
 
 GIT
-  remote: git@github.com:EuPathDB/puppet-ebrc_java.git
+  remote: https://github.com/EuPathDB/puppet-ebrc_java.git
   ref: master
   sha: 5434fa8c13d2dc4987530b5d9e713f05b9d93841
   specs:
     ebrc-ebrc_java (0.1.0)
 
 GIT
-  remote: git@github.com:EuPathDB/puppet-ebrc_jenkins.git
+  remote: https://github.com/EuPathDB/puppet-ebrc_jenkins.git
   ref: master
   sha: 4865f8a716fad021a84dea17b4f823d26845496c
   specs:
@@ -38,14 +38,14 @@ GIT
       puppet-archive (>= 0)
 
 GIT
-  remote: git@github.com:EuPathDB/puppet-ebrc_maven.git
+  remote: https://github.com/EuPathDB/puppet-ebrc_maven.git
   ref: master
   sha: 1a1e054e55ec51a1d82babb4f5d320b6b9a517d5
   specs:
     ebrc-ebrc_maven (0.1.0)
 
 GIT
-  remote: git@github.com:EuPathDB/puppet-ebrc_yum_repo.git
+  remote: https://github.com/EuPathDB/puppet-ebrc_yum_repo.git
   ref: master
   sha: 2e75a0de6b7e4da022a1a4de7ee5306b5fcc0a4d
   specs:
@@ -53,7 +53,7 @@ GIT
       puppetlabs-stdlib (>= 1.0.0)
 
 GIT
-  remote: git@github.com:EuPathDB/puppet-irods.git
+  remote: https://github.com/EuPathDB/puppet-irods.git
   ref: master
   sha: 1080308dff67d8316aa4cfde7f37ffc8ff10a8fc
   specs:

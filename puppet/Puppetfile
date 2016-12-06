@@ -10,19 +10,19 @@ mod 'puppetlabs/postgresql'
 mod 'mthibaut/users'
 
 mod 'ebrc/ebrc_yum_repo',
-  :git => 'git@github.com:EuPathDB/puppet-ebrc_yum_repo.git'
+  :git => 'https://github.com/EuPathDB/puppet-ebrc_yum_repo.git'
 
 mod 'ebrc/ebrc_java',
-  :git => 'git@github.com:EuPathDB/puppet-ebrc_java.git'
+  :git => 'https://github.com/EuPathDB/puppet-ebrc_java.git'
 
 mod 'ebrc/ebrc_jenkins',
-  :git => 'git@github.com:EuPathDB/puppet-ebrc_jenkins.git'
+  :git => 'https://github.com/EuPathDB/puppet-ebrc_jenkins.git'
 
 mod 'ebrc/irods',
-  :git => 'git@github.com:EuPathDB/puppet-irods.git'
+  :git => 'https://github.com/EuPathDB/puppet-irods.git'
 
 mod 'ebrc/ebrc_maven',
-  :git => 'git@github.com:EuPathDB/puppet-ebrc_maven.git'
+  :git => 'https://github.com/EuPathDB/puppet-ebrc_maven.git'
 
 mod 'local/profiles',
   :path => './src/profiles'
