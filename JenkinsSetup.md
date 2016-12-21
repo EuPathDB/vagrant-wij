@@ -67,9 +67,11 @@ Console](http://wij.vm:9171/script)
 
 ## Job DSL
 
-At the root of the Vagrant project is a `workspacesJobs.groovy` file
-that defines Jenkins jobs used for workspaces workflows. It is executed
-when the `job-generator` job runs.
+At the root of the Vagrant project on the Vagrant host is a
+`workspacesJobs.groovy` file that defines Jenkins jobs used for
+workspaces workflows. It is NFS shared on the guest VM at
+`/vagrant/workspacesJobs.groovy` and executed when the `job-generator`
+job runs.
 
 For DSL information see
 [Jenkins Job DSL API](https://jenkinsci.github.io/job-dsl-plugin/)
