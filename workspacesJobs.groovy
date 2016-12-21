@@ -52,6 +52,24 @@ def makeWorkspace = {
   """.stripIndent()
 }
 
+def masterTriggerStep = {
+  return """
+    jenkins.model.Jenkins.instance.items.each {
+      if (it.name ==~ /^load_from_irods_to_.*/) {
+        println "Starting " + it.name
+        hudson.model.Hudson.instance.queue.schedule(it, 0)
+      }
+    }
+  """.stripIndent()
+}
+
+job('master_trigger') {
+  description('Trigger all load_from_irods_to_.* jobs')
+  steps {
+    systemGroovyCommand(masterTriggerStep())
+  }
+}
+
 job('makeSharedWorkspace') {
   description('')
   blockOn('^load_from_irods_to_.*')
