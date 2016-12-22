@@ -1,0 +1,54 @@
+#!groovy
+import hudson.security.*
+import jenkins.model.*
+import java.util.logging.Logger
+
+def logger = Logger.getLogger("")
+
+def instance = Jenkins.getInstance()
+def pm = instance.getPluginManager()
+def uc = instance.getUpdateCenter()
+def needs_restart = false
+
+def jenkins_home = hudson.EnvVars.masterEnvVars.get("JENKINS_HOME")
+
+// disable setup wizard
+File file = new File("${jenkins_home}/jenkins.install.InstallUtil.lastExecVersion")
+file.write "2.0"
+
+/** AUTHENTICATION **/
+
+def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+hudsonRealm.createAccount('<%= @adminuser %>', '<%= @adminpassword %>')  // TOKENIZE
+instance.setSecurityRealm(hudsonRealm)
+instance.save()
+
+def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+instance.setAuthorizationStrategy(strategy)
+instance.save()
+
+/** PLUGINS **/
+
+def plugins = [
+  <%= @plugins.map{ |plugin| "'#{plugin}'"}.join(",\n  ") %>
+]
+
+uc.updateAllSites()
+plugins.each {
+  logger.info("Checking " + it)
+  if (!pm.getPlugin(it)) {
+    logger.info("Looking in UpdateCenter for " + it)
+    def plugin = uc.getPlugin(it)
+    if (plugin) {
+      logger.info("Installing " + it)
+    	plugin.deploy()
+      needs_restart = true
+    }
+  }
+}
+
+if (needs_restart) {
+  logger.info("Restarting...")
+  instance.save()
+  instance.doSafeRestart()
+}
