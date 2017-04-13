@@ -1,4 +1,4 @@
 ---
 roles:
   - profiles::ebrc_jenkins
-  - profiles::irods_icat_postgres
+  - profiles::irods_provider

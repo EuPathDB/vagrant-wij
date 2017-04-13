@@ -19,7 +19,8 @@ mod 'ebrc/ebrc_jenkins',
   :git => 'https://github.com/EuPathDB/puppet-ebrc_jenkins.git'
 
 mod 'ebrc/irods',
-  :git => 'https://github.com/EuPathDB/puppet-irods.git'
+  :git => 'https://github.com/EuPathDB/puppet-irods.git',
+  :ref => 'irods4.2'
 
 mod 'ebrc/ebrc_maven',
   :git => 'https://github.com/EuPathDB/puppet-ebrc_maven.git'

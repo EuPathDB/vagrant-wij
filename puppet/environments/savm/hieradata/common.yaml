@@ -27,20 +27,20 @@ irods::globals::ssl_certificate_key_file_source: "puppet:///modules/profiles/ssl
 
 irods::globals::install_dev_pkgs: false
 
-irods::globals::icat_server: wij.vm
-irods::globals::icat_server_zone: ebrc
-irods::globals::icat_admin_user: icatadmin
-irods::globals::icat_admin_pass: passWORD
+irods::globals::provider_server: wij.vm
+irods::globals::provider_server_zone: ebrc
+irods::globals::provider_admin_user: icatadmin
+irods::globals::provider_admin_pass: passWORD
 irods::globals::srv_negotiation_key: fbb4c4fd185e3a98f8715ff5c1c86715
 irods::globals::ctrl_plane_key: ca2ad0abf0faa703cf0829af99465ac9
 irods::globals::srv_zone_key: e83ac54fe6d5d66f24d16644ce72d9ae
 
-irods::icat::db_vendor: postgres
-irods::icat::db_name: ICAT
-irods::icat::db_user: irods
-irods::icat::db_password: passWORD
-irods::icat::db_srv_host: localhost
-irods::icat::re_rulebase_set: ['ebrc', 'core']
+irods::provider::db_vendor: postgres
+irods::provider::db_name: ICAT
+irods::provider::db_user: irods
+irods::provider::db_password: passWORD
+irods::provider::db_srv_host: localhost
+irods::provider::re_rulebase_set: ['ebrc', 'core']
 
 irods::icommands:
   - { exec: mkresc, resc: ebrcResc, type: passthru }
@@ -70,6 +70,9 @@ irods::icommands:
 # nslcd::ldap_bindpw:  see sensitive.yaml
 
 postgresql::server::postgres_password: PASSweird
+postgresql::globals::manage_package_repo: true
+postgresql::globals::version: '9.6'
+
 
 users_irods:
     irods:
