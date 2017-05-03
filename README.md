@@ -226,7 +226,7 @@ Use Jenkins' web interface to add a node configuration.
 
         Manage Jenkins
           Manage Nodes
-            New Nodes
+            New Node
               Name: webdev <or your choice>
               Type: Permanent Agent
               OK
@@ -235,10 +235,12 @@ Use Jenkins' web interface to add a node configuration.
                 # of executors 1 <or your choice>
                 Remote root directory /var/tmp <or your choice>
                 Labels: <blank>
+                Usage: Use this node as much as possible
                 Launch method: Launch slave agents on Unix machines via SSH
                 Host: localhost
                 Credentials: joeuser <see next Guidance below for adding joeuser>
-                <remaining options can be left empty for now>
+                Host Key Verification Strategy: Non verifying Verification Strategy
+                Availability: Keep this agent online as much as possible
 
 Once saved, it will take several seconds for the node to be setup. You
 can view the node log for details.
