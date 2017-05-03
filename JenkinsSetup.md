@@ -51,16 +51,8 @@ Console](http://wij.vm:9171/script)
     job.customWorkspace = '/vagrant'
     job.displayName = 'job-generator'
 
-    builder = new javaposse.jobdsl.plugin.ExecuteDslScripts(
-      new javaposse.jobdsl.plugin.ExecuteDslScripts.ScriptLocation(
-          'false',
-          'workspacesJobs.groovy',
-          null),
-      false,
-      javaposse.jobdsl.plugin.RemovedJobAction.DELETE, 
-      javaposse.jobdsl.plugin.RemovedViewAction.DELETE, 
-      javaposse.jobdsl.plugin.LookupStrategy.JENKINS_ROOT
-    )
+    builder = new javaposse.jobdsl.plugin.ExecuteDslScripts()
+    builder.targets = 'workspacesJobs.groovy'
     job.buildersList.add(builder)
     job.save()
     job.scheduleBuild(0)
