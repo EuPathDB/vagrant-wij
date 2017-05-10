@@ -20,6 +20,9 @@ Vagrant.configure(2) do |config|
     v.memory = 2048
   end
 
+  irods_rest_port = 8180
+  config.vm.network "forwarded_port", guest: irods_rest_port, host: irods_rest_port
+
   config.vm.network :private_network, type: :dhcp
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
@@ -52,6 +55,10 @@ Vagrant.configure(2) do |config|
     puppet.hiera_config_path = 'puppet/hiera.yaml'
     #puppet.options = ['--debug --trace --verbose']
   end
+
+  config.vm.provision 'shell',
+    inline: "firewall-cmd --permanent --add-rich-rule=\"rule port port=#{irods_rest_port} protocol='tcp' accept\""
+
   if ( Vagrant.has_plugin?('landrush') and config.landrush.enabled)
     config.vm.provision :shell, inline: '/sbin/iptables-restore < /root/landrush.iptables'
   end
