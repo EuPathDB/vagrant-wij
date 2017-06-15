@@ -35,6 +35,13 @@ irods::globals::srv_negotiation_key: fbb4c4fd185e3a98f8715ff5c1c86715
 irods::globals::ctrl_plane_key: ca2ad0abf0faa703cf0829af99465ac9
 irods::globals::srv_zone_key: e83ac54fe6d5d66f24d16644ce72d9ae
 
+irods::rest_api::irods_host: wij.vm
+irods::rest_api::irods_port: 1247
+irods::rest_api::irods_zone: ebrc
+irods::rest_api::default_storage_resource: ebrcResc
+irods::rest_api::extra_docker_args:
+    hostentries: "wij.vm:%{facts.ipaddress_enp0s8}"
+
 irods::provider::db_vendor: postgres
 irods::provider::db_name: ICAT
 irods::provider::db_user: irods

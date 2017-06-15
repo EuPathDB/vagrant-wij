@@ -8,6 +8,8 @@ class profiles::irods_provider {
   include ::profiles::irods_postgres_provider
   include ::irods::provider
   include ::profiles::irods_icommands
+  include ::irods::rest_api
+  include ::firewalld
   #include ::profiles::irods_pam
 
   Class['profiles::base'] ->
@@ -22,6 +24,17 @@ class profiles::irods_provider {
     mode   => '0600',
   } ->
   Class['profiles::irods_icommands']
+
+  # allow irods-rest through firewall
+  firewalld_rich_rule { "irods-rest":
+      ensure => present,
+      zone   => 'public',
+      port   => {
+        'port'     => 8180,
+        'protocol' => 'tcp',
+      },
+      action => 'accept',
+  }
 
   package { 'irods-resource-plugin-shareuf-4.2.0':
     ensure  => 'latest',

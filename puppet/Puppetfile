@@ -8,6 +8,7 @@ mod 'puppetlabs/java_ks'
 mod 'puppetlabs/stdlib', '4.12.0'
 mod 'puppetlabs/postgresql'
 mod 'mthibaut/users'
+mod 'garethr/docker'
 
 mod 'ebrc/ebrc_yum_repo',
   :git => 'https://github.com/EuPathDB/puppet-ebrc_yum_repo.git'
