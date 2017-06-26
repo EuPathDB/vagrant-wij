@@ -41,13 +41,14 @@ irods::rest_api::irods_zone: ebrc
 irods::rest_api::default_storage_resource: ebrcResc
 irods::rest_api::extra_docker_args:
     hostentries: "wij.vm:%{facts.ipaddress_enp0s8}"
+docker::bip: 192.0.3.1/24
 
 irods::provider::db_vendor: postgres
 irods::provider::db_name: ICAT
 irods::provider::db_user: irods
 irods::provider::db_password: passWORD
 irods::provider::db_srv_host: localhost
-irods::provider::re_rulebase_set: ['ebrc', 'core']
+irods::provider::re_rulebase_set: ['ebrc', 'core', 'ud']
 
 irods::icommands:
   - { exec: mkresc, resc: ebrcResc, type: passthru }
@@ -64,6 +65,11 @@ irods::icommands:
   - { exec: atg, group: wrkspGroup, user: wrkspuser }
   - { exec: atg, group: staffGroup, user: mheiges }
   - { exec: imkdir, collection: /ebrc/workspaces }
+  - { exec: imkdir, collection: /ebrc/workspaces/events }
+  - { exec: imkdir, collection: /ebrc/workspaces/flags }
+  - { exec: imkdir, collection: /ebrc/workspaces/lz }
+  - { exec: imkdir, collection: /ebrc/workspaces/staging }
+  - { exec: imkdir, collection: /ebrc/workspaces/users }
   - { exec: ichmod, action: inherit,                   collOrDataObj: /ebrc/workspaces }
   - { exec: ichmod, action: own,     user: wrkspuser,  collOrDataObj: /ebrc/workspaces }
   - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc/workspaces }
@@ -80,6 +86,8 @@ postgresql::server::postgres_password: PASSweird
 postgresql::globals::manage_package_repo: true
 postgresql::globals::version: '9.6'
 
+profiles::svn_files::checkout_location: /vagrant/scratch/svn_files
+profiles::svn_files::checkout_revision: HEAD
 
 users_irods:
     irods:

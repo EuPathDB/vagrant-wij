@@ -1,0 +1,10 @@
+import hudson.model.*
+import jenkins.security.*
+
+
+User u = User.get("wrkspuser")  
+ApiTokenProperty t = u.getProperty(ApiTokenProperty.class)  
+def token = t.getApiToken()
+//token.getClass()
+File fact_file = new File("/usr/local/home/jenkins/jenkins_token.txt")
+fact_file.write "wrkspuser_token=$token"

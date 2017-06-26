@@ -16,12 +16,26 @@ def jenkins_home = hudson.EnvVars.masterEnvVars.get("JENKINS_HOME")
 File file = new File("${jenkins_home}/jenkins.install.InstallUtil.lastExecVersion")
 file.write "2.0"
 
+// set site jenkins_url (see https://issues.jenkins-ci.org/browse/JENKINS-28466)
+def jlc = JenkinsLocationConfiguration.get()
+jlc.setUrl("http://wij.vm:9171/")
+jlc.save()
+
 /** AUTHENTICATION **/
 
+// admin user
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
 hudsonRealm.createAccount('<%= @adminuser %>', '<%= @adminpassword %>')  // TOKENIZE
 instance.setSecurityRealm(hudsonRealm)
 instance.save()
+
+// wrkspuser user
+//def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+hudsonRealm.createAccount('<%= @wrkspuser %>', '<%= @wrksppassword %>')  // TOKENIZE
+//hudsonRealm.createAccount('wrkspuser', 'password')  // TOKENIZE
+instance.setSecurityRealm(hudsonRealm)
+instance.save()
+
 
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
 instance.setAuthorizationStrategy(strategy)

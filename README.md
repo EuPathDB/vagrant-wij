@@ -172,15 +172,8 @@ Jenkins
 Initial Setup
 ---------
 
-The first time accessing the Jenkins website you will be prompted to
-setup a new admin account and install plugins. Follow the prompts. If
-you get the error
-"_An error occurred during installation: No such plugin: cloudbees-folder_"
-when attempting plugin installation, try restarting the Jenkins service
-and then start again with the website setup wizard.
-
-I recommend that you "Install suggested plugins". You can install other
-desired plugins later.
+Jenkins should come up without manual steps.  The admin user is configured as
+`admin/santafe7`.  
 
 Web Address
 ---------
@@ -206,53 +199,17 @@ Logging is at `/var/log/jenkins/WS.log`
 Example Node Setup
 ---------
 
-You can run jobs on the master but you may want to run jobs on a node as
-a specific user. In production we typically use nodes running in the
-`joeuser` account. You can simulate that environment here if you wish;
-the advantage is that you can be assured that the `joeuser` account is
-capable to run your jobs.
+A node is created at startup called 'irods' with 4 executors.  The jobs are 
+configured to use this node.
 
-In this simulation, the node is on the same virtual machine as the
-master but is configured with an ssh connections using the `joeuser`
-account as it would be for remote production nodes.
 
-You will need the `SSH Slaves plugin` installed; this will be installed
-if you chose to installed the suggested plugins at setup, otherwise
-install it manually.
-
-Use Jenkins' web interface to add a node configuration.
-
-*UI Navigation Guidance for Add Node.*
-
-        Manage Jenkins
-          Manage Nodes
-            New Node
-              Name: webdev <or your choice>
-              Type: Permanent Agent
-              OK
-              
-                Name: webdev <or your choice>
-                # of executors 1 <or your choice>
-                Remote root directory /var/tmp <or your choice>
-                Labels: <blank>
-                Usage: Use this node as much as possible
-                Launch method: Launch slave agents on Unix machines via SSH
-                Host: localhost
-                Credentials: joeuser <see next Guidance below for adding joeuser>
-                Host Key Verification Strategy: Non verifying Verification Strategy
-                Availability: Keep this agent online as much as possible
-
-Once saved, it will take several seconds for the node to be setup. You
-can view the node log for details.
-
-*Guidance for Add Credentials.*
-
-          Domain: Global credentials
-          Kind: SSH Username with private key
-          Scope: System
-          Username: joeuser
-          Private Key: From the Jenkins master ~/.ssh
-          Passphrase: <blank>
-          Id: <blank>
-          Description: <your choice>
-
+Notes/Issues
+=======
+  - Due to how some things are generated with puppet, you'll need to run
+    `vagrant provision` after the first `vagrant up`.  This is mainly so that
+    the jenkins.conf can be populated with the proper generated credentials
+  - the subversion repo will be checked out in vagrant/scratch/svn_files and
+    the appropriate links will be made inside the vm to where those files
+    should go.
+  - Scripts must be approved at http://wij.vm:9171/scriptApproval/ There is
+    only one currently, but I have not found an elegant way to auto-approve it.
