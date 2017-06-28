@@ -65,15 +65,16 @@ irods::icommands:
   - { exec: atg, group: wrkspGroup, user: wrkspuser }
   - { exec: atg, group: staffGroup, user: mheiges }
   - { exec: imkdir, collection: /ebrc/workspaces }
+  - { exec: ichmod, action: inherit,                   collOrDataObj: /ebrc/workspaces }
+  - { exec: ichmod, action: own,     user: wrkspuser,  collOrDataObj: /ebrc/workspaces }
+  - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc/workspaces }
+  - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc }
   - { exec: imkdir, collection: /ebrc/workspaces/events }
   - { exec: imkdir, collection: /ebrc/workspaces/flags }
   - { exec: imkdir, collection: /ebrc/workspaces/lz }
   - { exec: imkdir, collection: /ebrc/workspaces/staging }
   - { exec: imkdir, collection: /ebrc/workspaces/users }
-  - { exec: ichmod, action: inherit,                   collOrDataObj: /ebrc/workspaces }
-  - { exec: ichmod, action: own,     user: wrkspuser,  collOrDataObj: /ebrc/workspaces }
-  - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc/workspaces }
-  - { exec: ichmod, action: read,    user: staffGroup, collOrDataObj: /ebrc }
+  - { exec: imeta, action: set, collOrDataObj: /ebrc/workspaces, objtype: -C, attname: irods_id, attvalue: wij_vm }
 
 
 # nslcd::ldap_uris: see sensitive.yaml
