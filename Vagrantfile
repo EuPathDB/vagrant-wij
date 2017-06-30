@@ -21,6 +21,7 @@ Vagrant.configure(2) do |config|
   end
 
   irods_rest_port = 8180
+  java_debug_port = 8800
   config.vm.network "forwarded_port", guest: irods_rest_port, host: irods_rest_port
 
   config.vm.network :private_network, type: :dhcp
@@ -59,6 +60,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision 'shell',
     inline: "firewall-cmd --permanent --add-rich-rule=\"rule port port=#{irods_rest_port} protocol='tcp' accept\""
+    inline: "firewall-cmd --permanent --add-rich-rule=\"rule port port=#{java_debug_port} protocol='tcp' accept\""
 
   if ( Vagrant.has_plugin?('landrush') and config.landrush.enabled)
     config.vm.provision :shell, inline: '/sbin/iptables-restore < /root/landrush.iptables'
