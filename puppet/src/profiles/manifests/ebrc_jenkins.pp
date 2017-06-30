@@ -41,7 +41,7 @@ class profiles::ebrc_jenkins {
     'pipeline-rest-api',
     'pipeline-stage-view',
     'plain-credentials',
-    'pre-scm',
+    'preSCMbuildstep',
     'resource-disposer',
     'run-condition',
     'scm-api',
