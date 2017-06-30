@@ -60,6 +60,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.provision 'shell',
     inline: "firewall-cmd --permanent --add-rich-rule=\"rule port port=#{irods_rest_port} protocol='tcp' accept\""
+  config.vm.provision 'shell',
     inline: "firewall-cmd --permanent --add-rich-rule=\"rule port port=#{java_debug_port} protocol='tcp' accept\""
 
   if ( Vagrant.has_plugin?('landrush') and config.landrush.enabled)
