@@ -23,7 +23,8 @@ class profiles::irods_provider {
     group  => $::irods::globals::srv_grp,
     mode   => '0600',
   } ->
-  Class['profiles::irods_icommands']
+  Class['profiles::irods_icommands'] ->
+  Class['irods::rest_api']
 
   # allow irods-rest through firewall
   firewalld_rich_rule { "irods-rest":
