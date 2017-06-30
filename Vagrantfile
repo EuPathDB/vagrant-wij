@@ -38,6 +38,7 @@ Vagrant.configure(2) do |config|
     # (A pull request for the patch as been sent to the upstream landrush maintainer.)
     config.vm.provision :shell, inline: '/sbin/iptables-save -t nat > /root/landrush.iptables'
     config.landrush.tld = 'vm'
+    config.landrush.host_interface_excludes = [/lo[0-9]*/, /docker[0-9]+/, /tun[0-9]+/]
     #config.landrush.host 'wij.vm'
   end
 
@@ -61,6 +62,11 @@ Vagrant.configure(2) do |config|
 
   if ( Vagrant.has_plugin?('landrush') and config.landrush.enabled)
     config.vm.provision :shell, inline: '/sbin/iptables-restore < /root/landrush.iptables'
+    # docker adds rules to the nat table that conflict with landrush dns.  The
+    # above iptables-restore changes the order and breaks docker.  the most
+    # straightforward way to address this is to restart the docker daemon so
+    # they rules get re-added in the correct order.
+    config.vm.provision :shell, inline: '/bin/systemctl restart  docker.service'
   end
 
 end
