@@ -1,4 +1,4 @@
-class profiles::workspaces {
+class profiles::ebrc_workspaces {
 
   package { 'python-irodsclient':
     ensure   => installed,

@@ -3,4 +3,5 @@ roles:
   - profiles::ebrc_jenkins
   - profiles::irods_provider
   - profiles::svn_files
-  - profiles::workspaces
+  - profiles::ebrc_workspaces
+  - profiles::ebrc_workspaces_jenkins
