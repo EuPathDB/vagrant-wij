@@ -55,6 +55,10 @@ workspaces::jenkins::adminpassword: santafe7
 workspaces::jenkins::wrkspuser: wrkspuser
 workspaces::jenkins::wrksppassword: password
 
+workspaces::svn_files::checkout_location: /vagrant/scratch/svn_files
+workspaces::svn_files::checkout_revision: HEAD
+
+
 irods::icommands:
   - { exec: mkresc, resc: ebrcResc, type: passthru }
   - { exec: mkresc, resc: rr1Resc, type: roundrobin }
@@ -91,9 +95,6 @@ irods::icommands:
 postgresql::server::postgres_password: PASSweird
 postgresql::globals::manage_package_repo: true
 postgresql::globals::version: '9.6'
-
-profiles::svn_files::checkout_location: /vagrant/scratch/svn_files
-profiles::svn_files::checkout_revision: HEAD
 
 users_irods:
     irods:
