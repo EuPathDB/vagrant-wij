@@ -2,10 +2,10 @@
 
 class profiles::ebrc_workspaces_jenkins {
 
-  $adminuser = 'admin'
-  $adminpassword = 'santafe7'
-  $wrkspuser = 'wrkspuser'
-  $wrksppassword = 'password'
+  $adminuser     = lookup({"name" => "workspaces::jenkins::adminuser"})
+  $adminpassword = lookup({"name" => "workspaces::jenkins::adminpassword"})
+  $wrkspuser     = lookup({"name" => "workspaces::jenkins::wrkspuser"})
+  $wrksppassword = lookup({"name" => "workspaces::jenkins::wrksppassword"})
 
   $plugins = [
     'antisamy-markup-formatter',
@@ -53,12 +53,6 @@ class profiles::ebrc_workspaces_jenkins {
   Class['::profiles::ebrc_jenkins'] ->
   Class['::profiles::ebrc_workspaces_jenkins']
 
-  # groovy init scripts.  These are  executed by jenkins at startup, in
-  # lexical order
-  file { '/usr/local/home/jenkins/Instances/WS/init.groovy.d':
-    ensure => 'directory'
-  }
-
   # this handles user and plugin setup
   file { '/usr/local/home/jenkins/Instances/WS/init.groovy.d/10_init.groovy':
     ensure  => 'file',
@@ -90,12 +84,6 @@ class profiles::ebrc_workspaces_jenkins {
     notify  => Service['jenkins@WS'],
   }
 
-  # generate template used by irods job runner (executeJobFile.py)
-  file { '/var/lib/irods/jenkins.conf':
-    ensure  => 'file',
-    content => template('profiles/jenkins.conf.erb'),
-    require => Class['irods::provider'],
-  }
 
   # because this vm instance will dynamically generate the api token, the
   # 12_api_token.groovy script creates a file in jenkin's home with the
