@@ -1,5 +1,13 @@
+# this profile contains workspaces configurations that aren't directly
+# jenkins or irods related. 
+
 class profiles::ebrc_workspaces {
 
+  $wrkspuser     = lookup({"name" => "workspaces::jenkins::wrkspuser"})
+  $wrksppassword = lookup({"name" => "workspaces::jenkins::wrksppassword"})
+  $wrksptoken    = lookup({"name" => "workspaces::jenkins::wrksptoken", "default_value" => $::wrkspuser_token}) # default to wrkspuser_token fact
+
+  # these packages are needed for irods helper scripts
   package { 'python-irodsclient':
     ensure   => installed,
     provider => 'pip',
