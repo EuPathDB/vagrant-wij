@@ -7,24 +7,42 @@ import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.plugins.sshslaves.verifiers.NonVerifyingKeyVerificationStrategy;
 
 import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey
+import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource
 import com.cloudbees.plugins.credentials.CredentialsScope
-
+import com.cloudbees.plugins.credentials.CredentialsProvider
+import com.cloudbees.plugins.credentials.common.StandardUsernameCredentials
 import com.cloudbees.plugins.credentials.impl.*;
 import com.cloudbees.plugins.credentials.*;
 import com.cloudbees.plugins.credentials.domains.*;
 
 
-// Create joeuser, save id for later
-def joeuser_id = java.util.UUID.randomUUID().toString()
+def username="joeuser"
+def keypath="/usr/local/home/jenkins/.ssh/id_rsa"
 
-def ks = new BasicSSHUserPrivateKey(CredentialsScope.SYSTEM,
-    joeuser_id,
-    "joeuser",
-    new BasicSSHUserPrivateKey.UsersPrivateKeySource(),
-    "",
-    "")
+def creds = CredentialsProvider.lookupCredentials(StandardUsernameCredentials.class, Jenkins.instance)
+def c = creds.findResult { it.username == username ? it : null }
 
-SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), ks)
+// only create creds if they don't exist yet
+if (!c) {
+    println "${username} not found, creating"
+    ks = new BasicSSHUserPrivateKey(
+          CredentialsScope.SYSTEM,
+          null,
+          username,
+          new FileOnMasterPrivateKeySource(keypath),
+          "",
+          ""
+        )
+    SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), ks)
+
+    creds = CredentialsProvider.lookupCredentials(StandardUsernameCredentials.class, Jenkins.instance)
+    c = creds.findResult { it.username == username ? it : null }
+    println "${c.username} created with id ${c.id}"
+
+} else {
+    println "${c.username} found with id ${c.id}"
+}
+
 
 
 
@@ -42,7 +60,7 @@ SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(
                     "irods-node",              // labelString
                     new SSHLauncher("localhost",   // host
                         22,                        // port
-                        SSHLauncher.lookupSystemCredentials(joeuser_id), // creds (from above)
+                        c,                         // creds (from above)
                         "",                        // jvmOptions
                         "",                        // javaPath
                         null,                      // JDKInstaller
