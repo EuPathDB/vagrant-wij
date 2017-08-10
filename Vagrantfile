@@ -6,6 +6,15 @@
   end
 end
 
+if Vagrant::VERSION =~ /^1.9/
+  # GEM_PATH is only /opt/vagrant/embedded/gems in Vagrant 1.9 and that
+  # excludes the Puppet Gem installed in ~/.vagrant.d by librarian-puppet,
+  # so add this back to GEM_PATH.
+  #   https://github.com/mitchellh/vagrant/issues/8235
+  #   https://github.com/voxpupuli/vagrant-librarian-puppet/issues/59
+  ENV['GEM_PATH'] = "ENV['VAGRANT_HOME']/gems/2.3.4#{::File::PATH_SEPARATOR}#{ENV['PATH']}"
+end
+
 Vagrant.configure(2) do |config|
 
   config.vm.box_url = 'http://software.apidb.org/vagrant/webdev.json'
