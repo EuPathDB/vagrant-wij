@@ -37,6 +37,7 @@ class profiles::ebrc_workspaces_jenkins {
     'plain-credentials',
     'preSCMbuildstep',
     'resource-disposer',
+    'role-strategy',
     'run-condition',
     'scm-api',
     'script-security',
@@ -66,6 +67,13 @@ class profiles::ebrc_workspaces_jenkins {
   file { '/usr/local/home/jenkins/Instances/WS/init.groovy.d/12_token.groovy':
     ensure  => 'file',
     content => template('profiles/token.groovy.erb'),
+    notify  => Service['jenkins@WS'],
+  }
+
+  # this sets up role based authentication
+  file { '/usr/local/home/jenkins/Instances/WS/init.groovy.d/15_auth.groovy':
+    ensure  => 'file',
+    content => template('profiles/auth.groovy.erb'),
     notify  => Service['jenkins@WS'],
   }
 
