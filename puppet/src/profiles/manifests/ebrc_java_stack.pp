@@ -28,21 +28,21 @@
 #
 class profiles::ebrc_java_stack {
 
-  include ::ebrc_yum_repo
-  include ::profiles::ebrc_ca_bundle
+  include ::profiles::eupathrepo
   include ::profiles::ebrc_ca_keystore
 
   $java_home     = hiera('ebrc_java::java_home')
   $java_packages = hiera('ebrc_java::packages')
+  $java_truststore = hiera('ebrc_java::truststore')
 
   class { '::ebrc_java':
-    packages  => $java_packages,
-    java_home => $java_home,
+    packages   => $java_packages,
+    java_home  => $java_home,
+    truststore => $java_truststore,
   }
 
-  Class['::ebrc_yum_repo'] ->
+  Class['::profiles::eupathrepo'] ->
   Class['::ebrc_java'] ->
-  Class['::profiles::ebrc_ca_bundle'] ->
   Class['::profiles::ebrc_ca_keystore']
 
 }

@@ -30,14 +30,14 @@ FORGE
 GIT
   remote: https://github.com/EuPathDB/puppet-ebrc_java.git
   ref: master
-  sha: 5434fa8c13d2dc4987530b5d9e713f05b9d93841
+  sha: a72550e36dbcbc41712e49fc1f3b3d12df35a143
   specs:
     ebrc-ebrc_java (0.1.0)
 
 GIT
   remote: https://github.com/EuPathDB/puppet-ebrc_jenkins.git
   ref: master
-  sha: 947ce312c4aaa7ee1f68cf8b4047921503b74fd3
+  sha: 4f9a7771d467e345175ef934ff6d7f1bc18c6f9b
   specs:
     ebrc-ebrc_jenkins (0.1.0)
       puppet-archive (>= 0)
