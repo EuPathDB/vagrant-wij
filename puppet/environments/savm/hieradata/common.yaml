@@ -18,9 +18,6 @@ ebrc_maven::packages:
   - maven-3.3.3
 ebrc_maven::maven_home: /usr/java/maven-3.3.3
 
-java_keystore_target: /etc/pki/tls/certs/cacerts
-java_keystore_passwd: eb5b681c
-
 local_home: /usr/local/home
 
 irods::globals::use_ssl: true
