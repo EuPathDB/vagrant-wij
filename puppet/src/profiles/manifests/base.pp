@@ -14,6 +14,7 @@ class profiles::base {
       'ntp',
       'rsync',
       'strace',
+      'ansible',
     ]:
     ensure => 'installed',
   }
