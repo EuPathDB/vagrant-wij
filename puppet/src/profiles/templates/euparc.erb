@@ -1,0 +1,40 @@
+<%#
+For Hiera data of format
+
+    euparc:
+      resource:
+        record:
+          - field: value
+            field: value
+
+This template generates
+
+    <euparc>
+      <resource>
+        <record
+          field='value'
+          field='value'
+        />
+      </resource>
+    </euparc>
+
+-%>
+<?xml version="1.0" encoding="utf-8"?>
+
+<euparc>
+
+  <%- @euparc.each_pair do |resource, rsrc_data| -%>
+  <<%= resource %>>
+    <%- rsrc_data.each do |record, rec_data| -%>
+    <%- rec_data.each do |item| -%>
+    <<%= record %>
+      <%- item.each_pair do |field, value| -%>
+      <%= field %>='<%= value %>'
+      <%- end -%>
+    />
+    <%- end -%>
+    <%- end -%>
+  </<%= resource %>>
+
+  <%- end -%>
+</euparc>

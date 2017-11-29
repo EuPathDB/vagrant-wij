@@ -8,9 +8,11 @@ class profiles::jenkins_joeuser_ssh {
 
   include ::ebrc_jenkins
 
+  $joeuser_home = "/usr/local/home/joeuser/"
   $key_prv = "${::ebrc_jenkins::user_home}/.ssh/id_rsa"
   $key_pub = "${::ebrc_jenkins::user_home}/.ssh/id_rsa.pub"
   $authorized_keys = '/usr/local/home/joeuser/.ssh/authorized_keys'
+  $euparc  = hiera('euparc')
 
   file { "${::ebrc_jenkins::user_home}/.ssh":
     ensure => directory,
@@ -30,5 +32,13 @@ class profiles::jenkins_joeuser_ssh {
     command => "cat ${key_pub} >> ${authorized_keys}",
     unless  => ["grep -qf ${key_pub} ${authorized_keys}"],
   }
-  
+
+  file {"${joeuser_home}/.euparc":
+    ensure  => file,
+    content => template('profiles/euparc.erb'),
+    mode    => '0440',
+    owner   => 'joeuser',
+    group   => 'joeuser',
+  }
+
 }
