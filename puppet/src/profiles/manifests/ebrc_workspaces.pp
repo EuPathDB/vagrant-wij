@@ -42,8 +42,6 @@ class profiles::ebrc_workspaces {
     "$msi_bin/eventGenerator.py"                         => { target => "$checkout_location/Scripts/remoteExec/eventGenerator.py" },
     "$msi_bin/executeJobFile.py"                         => { target => "$checkout_location/Scripts/remoteExec/executeJobFile.py" },
     "/etc/irods/ud.re"                                   => { target => "$checkout_location/Scripts/ud.re" },
-    #TODO this should probably be elsewhere,
-    "/usr/local/home/jenkins/irodsWorkspacesJobs.groovy" => { target => "$checkout_location/Resources/JenkinsJobs/irodsWorkspacesJobs.groovy" },
   }
 
   create_resources(file, $links, $link_defaults)

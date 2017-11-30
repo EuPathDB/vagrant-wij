@@ -2,10 +2,14 @@
 
 class profiles::ebrc_workspaces_jenkins {
 
+  $dslconfig     = "/usr/local/home/jenkins/Instances/WS/dslconfig.groovy"
   $adminuser     = lookup({"name" => "workspaces::jenkins::adminuser"})
   $adminpassword = lookup({"name" => "workspaces::jenkins::adminpassword"})
   $wrkspuser     = lookup({"name" => "workspaces::jenkins::wrkspuser"})
   $wrksppassword = lookup({"name" => "workspaces::jenkins::wrksppassword"})
+  $nodes         = lookup({"name" => "workspaces::jenkins::nodes"})
+  $site_environment = "savm"
+  $confset       = "wij_configuration_set"
 
   $plugins = [
     'antisamy-markup-formatter',
@@ -89,6 +93,19 @@ class profiles::ebrc_workspaces_jenkins {
   file { '/usr/local/home/jenkins/Instances/WS/init.groovy.d/60_seed_job.groovy':
     ensure  => 'file',
     content => template('profiles/seed_job.groovy.erb'),
+    notify  => Service['jenkins@WS'],
+  }
+
+  file { '/usr/local/home/jenkins/irodsWorkspacesJobs.groovy':
+    ensure  => 'file',
+    content => template('profiles/irodsWorkspacesJobs.groovy.erb'),
+    notify  => Service['jenkins@WS'],
+  }
+
+  # template for all groovy script confs
+  file { '/usr/local/home/jenkins/Instances/WS/dslconfig.groovy':
+    ensure  => 'file',
+    content => template('profiles/dslconfig.groovy.erb'),
     notify  => Service['jenkins@WS'],
   }
 

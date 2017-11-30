@@ -7,12 +7,13 @@ import java.util.*
 import com.michelin.cio.hudson.plugins.rolestrategy.*
 import java.lang.reflect.*
 
+def config = new ConfigSlurper().parse(new File('<%= @dslconfig -%>').toURL())
 def env = System.getenv()
 
 // Roles
 def globalRoleRead = "read"
 def globalRoleAdmin = "admin"
-def globalRoleWrkspuser = "<%= @wrkspuser %>"
+def globalRoleWrkspuser = config.wrkspuser
 def ldapGroupNameAdmin = env['LDAP_GROUP_NAME_ADMIN'] ?: "admin"
 
 def jenkinsInstance = Jenkins.getInstance()

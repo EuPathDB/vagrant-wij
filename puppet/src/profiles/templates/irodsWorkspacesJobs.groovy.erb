@@ -1,0 +1,352 @@
+def config = new ConfigSlurper().parse(new File('<%= @dslconfig -%>').toURL())
+
+def handlerJobDesc = { project ->
+  return """
+    handler job for ${project} 
+  """.stripIndent()
+}
+
+def handlerStep = { project ->
+  return """
+    export BASE_GUS="\$WORKSPACE"
+    export GUS_HOME="\$BASE_GUS/gus_home"
+    export PROJECT_HOME="\$BASE_GUS/project_home"
+    export PATH="\$GUS_HOME/bin:\$PROJECT_HOME/install/bin:\$PATH"
+    export PERL5LIB="\$GUS_HOME/lib/perl"
+    export PROJECT_ID="${project}"
+    export PROJECT=\$PROJECT_ID
+    export PROJECT_LIST="\$PROJECT_HOME/EuPathDBIrods/projectconf/${config.confset}"
+
+    PROJECT_DB="\$(grep \$PROJECT \$PROJECT_LIST | cut -f 2)"
+    PROJECT_LOC="\$(grep \$PROJECT \$PROJECT_LIST | cut -f 3)"
+    echo PROJECT_DB=\$PROJECT_DB
+    echo PROJECT_LOC=\$PROJECT_LOC
+
+    # if project location is not both, and we aren't local, 
+    # just bail without configuring that project.
+    if [[ "\$PROJECT_LOC" == "north" && "\$label" == "irods-south" ]]
+      then
+        echo "project is \$PROJECT_LOC and I'm \$label. giving up"
+        exit
+    fi
+    
+    if [[ "\$PROJECT_LOC" == "south" && "\$label" == "irods-north" ]]
+      then
+        echo "project is \$PROJECT_LOC and I'm \$label. giving up"
+        exit
+    fi
+
+
+    fgpJava org.apidb.irods.BuildEventsFile
+  """.stripIndent()
+}
+
+def listenerStep = {
+  return """
+    jenkins.model.Jenkins.instance.items.each {
+      if (it.name ==~ /^irods-handler-.*/) {
+        println "Starting " + it.name
+		def build = Thread.currentThread().executable
+		def key = "${config.datasetStoreId}"
+		def resolver = build.buildVariableResolver
+		def value = resolver.resolve(key)
+		def param = new hudson.model.StringParameterValue(key, value)
+	    def paramAction = new hudson.model.ParametersAction(param)
+        hudson.model.Hudson.instance.queue.schedule(it, 0, paramAction)
+      }
+    }
+  """.stripIndent()
+}
+
+def builderPreScmStep = {
+    return """
+    # Setup env variables for this build step
+    export BASE_GUS="\$WORKSPACE"
+    
+    # Unless this build is run in development mode, completely remove
+    # everything in this workspace.  Then add back projectList.txt
+     if [[ "\$MODE" != "Dev" ]]
+      then
+        rm -rf \$BASE_GUS/*
+    fi
+    """.stripIndent()
+}
+
+def builderPostScmStep = {
+  return """
+
+
+# Setup env variables for this build step
+export BASE_GUS="\$WORKSPACE"
+export GUS_HOME="\$BASE_GUS/gus_home"
+export PROJECT_HOME="\$BASE_GUS/project_home"
+export PATH="\$GUS_HOME/bin:\$PROJECT_HOME/install/bin:\$PATH"
+export PERL5LIB="\$GUS_HOME/lib/perl"
+export SITE_VARS="\$GUS_HOME/config/site-vars.yml"
+
+export PROJECT_LIST="\$PROJECT_HOME/EuPathDBIrods/projectconf/${config.confset}"
+
+case "\$ENV" in
+    savm)
+        PREFIX=""
+        ;;
+    prod)
+        PREFIX="w"
+        ;;
+    qa)
+        PREFIX="q"
+        ;;
+esac
+
+mkdir -p "\$GUS_HOME/lib/java/db_driver";
+cp "\$ORACLE_HOME/jdbc/lib/ojdbc6.jar" "\$GUS_HOME/lib/java/db_driver/"
+
+#create empty site-vars.yml - all conifer config should be in env config
+mkdir -p \$GUS_HOME/config
+touch \$SITE_VARS
+
+# do initial conifer install
+\$BASE_GUS/project_home/FgpUtil/Util/bin/conifer install EuPathDBIrods
+
+# configure each project listed in PROJECT_LSIT
+PROJECTS="\$(grep -v ^project \$PROJECT_LIST | cut -f 1)"
+echo projects are: \$PROJECTS
+
+for PROJECT in \$PROJECTS
+do
+
+
+PROJECT_DB="\$(grep \$PROJECT \$PROJECT_LIST | cut -f 2)"
+PROJECT_LOC="\$(grep \$PROJECT \$PROJECT_LIST | cut -f 3)"
+echo PROJECT_DB=\$PROJECT_DB
+echo PROJECT_LOC=\$PROJECT_LOC
+
+if [[ "\$label" == "irods-south" ]]
+  then
+    WEBSITE_PREFIX=\${PREFIX}1
+fi
+
+if [[ "\$label" == "irods-north" ]]
+  then
+    WEBSITE_PREFIX=\${PREFIX}2
+fi
+
+# if project location is not both, and we aren't local, 
+# just bail without configuring that project.
+if [[ "\$PROJECT_LOC" == "north" && "\$label" == "irods-south" ]]
+  then
+    echo "project is \$PROJECT_LOC and I'm \$label. giving up"
+    continue
+fi
+
+if [[ "\$PROJECT_LOC" == "south" && "\$label" == "irods-north" ]]
+  then
+    echo "project is \$PROJECT_LOC and I'm \$label. giving up"
+    continue
+fi
+
+
+# if project db is auto, do lookup to website to determine db in use.
+if [[ "\$PROJECT_DB" == "auto" ]]
+  then
+    DB_URL="http://\$WEBSITE_PREFIX.\$PROJECT.org/dashboard/xml/wdk/databases/appdb/dbuniquename/value"
+    echo "I'd hit \$DB_URL"
+    CURL_OUT=\$(curl -f \$DB_URL)
+    
+    # basic sanity check
+    if [ \${#CURL_OUT} -gt 10 ]
+      then
+        # bail - maybe more forcefully?
+        continue
+    fi
+    PROJECT_DB=\$CURL_OUT
+fi
+
+
+# set appdb connection via extra vars to conifer
+  export EXTRA_CONIFER_ARGS=" --extra-vars modelconfig_appDb_connectionUrl=jdbc:oracle:oci:@\$PROJECT_DB"
+
+  echo project is: \$PROJECT
+  \$BASE_GUS/project_home/FgpUtil/Util/bin/conifer configure \\
+  --project \$PROJECT \\
+  --env \$ENV \\
+  --site-vars \$SITE_VARS \\
+  EuPathDBIrods \\
+  \$EXTRA_CONIFER_ARGS
+
+done
+
+# Contains all the project dependencies
+bld EuPathDBIrods
+
+  """.stripIndent()
+}
+
+matrixJob('irods-builder') {
+  axes {
+    label('label', *config.labelNodes)
+  }
+  description('')
+  blockOn('^' + config.handlerJobPrefix + '.*')
+  customWorkspace(config.workspace)
+  //childCustomWorkspace('.')
+  concurrentBuild(true)
+  parameters {
+    stringParam('MODE', 'Dev', 'Indicates whether the mode of operation is development (DEV) or other.  If not development, a complete cleaning is done.')
+    stringParam('ENV', config.environment, 'The environment to run in, (savm, prod, qa)')
+  }
+  scm {
+    svn {
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/install/trunk') {
+        directory('project_home/install')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/WSF/trunk') {
+        directory('project_home/WSF')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/TuningManager/trunk') {
+        directory('project_home/TuningManager')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/WDK/trunk') {
+        directory('project_home/WDK')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/GusAppFramework/trunk') {
+        directory('project_home/GUS')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/CBIL/trunk') {
+        directory('project_home/CBIL')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/ReFlow/trunk') {
+        directory('project_home/ReFlow')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/GusSchema/trunk') {
+        directory('project_home/GusSchema')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/gus/FgpUtil/trunk') {
+        directory('project_home/FgpUtil')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommonData/trunk') {
+        directory('project_home/ApiCommonData')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/EbrcWebsiteCommon/trunk') {
+        directory('project_home/EbrcWebsiteCommon')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/DoTS/trunk') {
+        directory('project_home/DoTS')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommonWebService/trunk') {
+        directory('project_home/ApiCommonWebService')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommonWebsite/trunk') {
+        directory('project_home/ApiCommonWebsite')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/EbrcWebSvcCommon/trunk') {
+        directory('project_home/EbrcWebSvcCommon')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/ApiCommonModel/trunk') {
+        directory('project_home/ApiCommonModel')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/EbrcModelCommon/trunk') {
+        directory('project_home/EbrcModelCommon')
+      }
+      location('https://cbilsvn.pmacs.upenn.edu/svn/apidb/EuPathDBIrods/trunk') {
+        directory('project_home/EuPathDBIrods')
+      }
+    }
+  }
+  triggers {
+    scm('H H * * *')
+  }
+  wrappers {
+    preScmSteps {
+      steps {
+        shell(builderPreScmStep())
+      }
+      failOnError()
+    }
+  }
+  steps {
+    shell(builderPostScmStep())
+  }
+  publishers {
+	extendedEmail {
+	  recipientList(config.emailRecipient)
+	  defaultSubject('Jenkins Message for the iRODS builder')
+      defaultContent('EOM')
+	  replyToList(config.sender)
+	  triggers {
+	    failure {
+	      subject('Jenkins Failure for the iRODS builder')
+	      content('Builder Failed')
+		  attachBuildLog(true)
+		  replyToList(config.sender)
+		  recipientList(config.emailRecipient)
+	    }
+	  }
+	}
+  }
+}
+
+job('irods-listener') {
+  description('Trigger all irods-handler-.* jobs')
+  parameters {
+	stringParam(config.datasetStoreId, '', 'This is essentially the signature of the dataset store calling this listener.')
+  }
+  steps {
+    systemGroovyCommand(listenerStep())
+  }
+  publishers {
+	extendedEmail {
+	  recipientList(config.emailRecipient)
+	  defaultSubject('Jenkins Message for the iRODS listener')
+      defaultContent('EOM')
+	  replyToList(config.sender)
+	  triggers {
+	    failure {
+	      subject('Jenkins Failure for the iRODS listener')
+	      content('Listener failed')
+		  attachBuildLog(true)
+		  replyToList(config.sender)
+		  recipientList(config.emailRecipient)
+	    }
+	  }
+	}
+  }
+}
+
+for(project in config.projects) {
+    jobName = config.handlerJobPrefix + project
+    matrixJob(jobName) {
+        axes {
+            label('label', *config.labelNodes)
+        }
+        description(handlerJobDesc(project))
+        parameters {
+      	  stringParam(config.datasetStoreId, '', 'This is essentially the signature of the dataset store calling this handler\'s listener.')
+        }
+        blockOn(config.builderJob)
+        //label(node)
+        customWorkspace(config.workspace)
+        //childCustomWorkspace('.')
+    	authenticationToken(config.remoteJobToken)
+        steps {
+          shell(handlerStep(project))
+        }
+	publishers {
+	  extendedEmail {
+	    recipientList(config.emailRecipient)
+	    defaultSubject('Jenkins Message for the ' + project + ' iRODS handler')
+		defaultContent('EOM')
+		replyToList(config.sender)
+	    triggers {
+	      failure {
+	        subject('Jenkins Failure for the ' + project + ' iRODS handler')
+	        content('Handler failed')
+			attachBuildLog(true)
+			replyToList(config.sender)
+			recipientList(config.emailRecipient)
+	      }
+	    }
+	  }
+	}
+    }
+}

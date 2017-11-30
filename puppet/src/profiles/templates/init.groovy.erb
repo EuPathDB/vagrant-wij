@@ -3,6 +3,7 @@ import hudson.security.*
 import jenkins.model.*
 import java.util.logging.Logger
 
+def config = new ConfigSlurper().parse(new File('<%= @dslconfig -%>').toURL())
 def logger = Logger.getLogger("")
 
 def instance = Jenkins.getInstance()
@@ -25,14 +26,13 @@ jlc.save()
 
 // admin user
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-hudsonRealm.createAccount('<%= @adminuser %>', '<%= @adminpassword %>')  // TOKENIZE
+hudsonRealm.createAccount(config.adminuser, config.adminpassword)  // TOKENIZE
 instance.setSecurityRealm(hudsonRealm)
 instance.save()
 
 // wrkspuser user
 //def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-hudsonRealm.createAccount('<%= @wrkspuser %>', '<%= @wrksppassword %>')  // TOKENIZE
-//hudsonRealm.createAccount('wrkspuser', 'password')  // TOKENIZE
+hudsonRealm.createAccount(config.wrkspuser, config.wrksppassword)  // TOKENIZE
 instance.setSecurityRealm(hudsonRealm)
 instance.save()
 
@@ -43,12 +43,8 @@ instance.save()
 
 /** PLUGINS **/
 
-def plugins = [
-  <%= @plugins.map{ |plugin| "'#{plugin}'"}.join(",\n  ") %>
-]
-
 uc.updateAllSites()
-plugins.each {
+config.plugins.each {
   logger.info("Checking " + it)
   if (!pm.getPlugin(it)) {
     logger.info("Looking in UpdateCenter for " + it)

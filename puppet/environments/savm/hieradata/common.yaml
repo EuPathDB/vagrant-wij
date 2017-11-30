@@ -54,6 +54,14 @@ workspaces::jenkins::adminpassword: santafe7
 workspaces::jenkins::wrkspuser: wrkspuser
 workspaces::jenkins::wrksppassword: password
 
+workspaces::jenkins::nodes:
+  - name: irods_n
+    host: localhost
+    label: irods-north
+#  - name: irods_s
+#    host: localhost
+#    label: irods-south
+
 workspaces::svn_files::checkout_location: /vagrant/scratch/svn_files
 workspaces::svn_files::checkout_revision: HEAD
 
