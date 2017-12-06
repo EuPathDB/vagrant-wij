@@ -17,8 +17,8 @@ confset = '<%= @confset %>'
 
 labelNodes = [
 <% @nodes.each do |node| %>
-"<%= node['label'] -%>",
-<% end %>
+    "<%= node['label'] -%>",
+<% end -%>
 ]
 
 
@@ -26,6 +26,12 @@ adminuser = '<%= @adminuser %>'
 adminpassword = '<%= @adminpassword %>'
 wrkspuser = '<%= @wrkspuser %>'
 wrksppassword = '<%= @wrksppassword %>'
+
+adminusers = [
+<% @adminusers.each do |user| %>
+    "<%= user -%>",
+<% end -%>
+]
 
 plugins = [
 <%= @plugins.map{ |plugin| "'#{plugin}'"}.join(",\n  ") %>

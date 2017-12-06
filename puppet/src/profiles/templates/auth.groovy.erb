@@ -14,7 +14,6 @@ def env = System.getenv()
 def globalRoleRead = "read"
 def globalRoleAdmin = "admin"
 def globalRoleWrkspuser = config.wrkspuser
-def ldapGroupNameAdmin = env['LDAP_GROUP_NAME_ADMIN'] ?: "admin"
 
 def jenkinsInstance = Jenkins.getInstance()
 def currentAuthenticationStrategy = Hudson.instance.getAuthorizationStrategy()
@@ -80,9 +79,11 @@ Thread.start {
     Role adminRole = new Role(globalRoleAdmin, adminPermissions);
     roleBasedAuthenticationStrategy.addRole(RoleBasedAuthorizationStrategy.GLOBAL, adminRole);
 
-    // Assign the role
-    roleBasedAuthenticationStrategy.assignRole(RoleBasedAuthorizationStrategy.GLOBAL, adminRole, ldapGroupNameAdmin);
-    println "Admin role created...OK"
+    // assign admin users
+    config.adminusers.each {
+        roleBasedAuthenticationStrategy.assignRole(RoleBasedAuthorizationStrategy.GLOBAL, adminRole, it);
+        println "Admin role ${it} created... OK"
+    }
 
     /// Read access for authenticated users
     // Create permissions
@@ -110,8 +111,9 @@ Thread.start {
     roleBasedAuthenticationStrategy.addRole(RoleBasedAuthorizationStrategy.GLOBAL, wrkspuserRole);
 
     // Assign the role
-    roleBasedAuthenticationStrategy.assignRole(RoleBasedAuthorizationStrategy.GLOBAL, wrkspuserRole, 'wrkspuser');
+    roleBasedAuthenticationStrategy.assignRole(RoleBasedAuthorizationStrategy.GLOBAL, wrkspuserRole, config.wrkspuser);
     println "Wrkspuser role created...OK"
+
 
     // Save the state
     println "Saving changes."

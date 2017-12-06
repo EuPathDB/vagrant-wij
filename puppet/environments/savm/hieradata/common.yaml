@@ -54,6 +54,9 @@ workspaces::jenkins::adminpassword: santafe7
 workspaces::jenkins::wrkspuser: wrkspuser
 workspaces::jenkins::wrksppassword: password
 
+workspaces::jenkins::adminusers:
+  - admin
+
 workspaces::jenkins::nodes:
   - name: irods_n
     host: localhost

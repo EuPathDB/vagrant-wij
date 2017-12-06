@@ -8,6 +8,7 @@ class profiles::ebrc_workspaces_jenkins {
   $wrkspuser     = lookup({"name" => "workspaces::jenkins::wrkspuser"})
   $wrksppassword = lookup({"name" => "workspaces::jenkins::wrksppassword"})
   $nodes         = lookup({"name" => "workspaces::jenkins::nodes"})
+  $adminusers    = lookup({"name" => "workspaces::jenkins::adminusers"})
   $site_environment = "savm"
   $confset       = "wij_configuration_set"
 
@@ -63,6 +64,8 @@ class profiles::ebrc_workspaces_jenkins {
     ensure  => 'file',
     content => template('profiles/init.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
   # this creates /usr/local/home/jenkins/jenkins_token.txt, which is linked
@@ -72,6 +75,8 @@ class profiles::ebrc_workspaces_jenkins {
     ensure  => 'file',
     content => template('profiles/token.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
   # this sets up role based authentication
@@ -79,6 +84,8 @@ class profiles::ebrc_workspaces_jenkins {
     ensure  => 'file',
     content => template('profiles/auth.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
   # this creates the irods node
@@ -86,27 +93,34 @@ class profiles::ebrc_workspaces_jenkins {
     ensure  => 'file',
     content => template('profiles/irods_node.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
-  # this executes the irodsWorkspacesJobs.groovy script that lives in svn,
-  # but is linked to /usr/local/home/jenkins/
+  # this executes the irodsWorkspacesJobs.groovy script
   file { '/usr/local/home/jenkins/Instances/WS/init.groovy.d/60_seed_job.groovy':
     ensure  => 'file',
     content => template('profiles/seed_job.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
   file { '/usr/local/home/jenkins/irodsWorkspacesJobs.groovy':
     ensure  => 'file',
     content => template('profiles/irodsWorkspacesJobs.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
   # template for all groovy script confs
-  file { '/usr/local/home/jenkins/Instances/WS/dslconfig.groovy':
+  file { $dslconfig:
     ensure  => 'file',
     content => template('profiles/dslconfig.groovy.erb'),
     notify  => Service['jenkins@WS'],
+    owner   => 'jenkins',
+    mode    => '0600'
   }
 
 
