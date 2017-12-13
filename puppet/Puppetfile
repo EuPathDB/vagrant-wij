@@ -30,3 +30,7 @@ mod 'ebrc/ebrc_maven',
 mod 'local/profiles',
   :path => './src/profiles'
   :latest
+
+mod 'ebrc/workspaces',
+  :git => 'https://github.com/EuPathDB/puppet-workspaces.git'
+  :latest

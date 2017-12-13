@@ -65,6 +65,14 @@ GIT
     ebrc-irods (0.1.0)
       puppetlabs-stdlib (>= 1.0.0)
 
+GIT
+  remote: https://github.com/EuPathDB/puppet-workspaces.git
+  ref: master
+  sha: 8cb3ea3e123165876b91ff374fd480617710df0b
+  specs:
+    ebrc-workspaces (0.1.0)
+      puppetlabs-stdlib (>= 1.0.0)
+
 PATH
   remote: ./src/profiles
   specs:
@@ -83,6 +91,7 @@ DEPENDENCIES
   ebrc-ebrc_maven (>= 0)
   ebrc-ebrc_yum_repo (>= 0)
   ebrc-irods (>= 0)
+  ebrc-workspaces (>= 0)
   garethr-docker (>= 0)
   jlambert121-trusted_ca (>= 0)
   local-profiles (>= 0)

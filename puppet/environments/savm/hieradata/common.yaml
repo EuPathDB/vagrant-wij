@@ -49,10 +49,14 @@ irods::provider::db_password: passWORD
 irods::provider::db_srv_host: localhost
 irods::provider::re_rulebase_set: ['ud', 'ebrc', 'core']
 
-workspaces::jenkins::adminuser: admin
-workspaces::jenkins::adminpassword: santafe7
+workspaces::jenkins::url: http://wij.vm:9171
 workspaces::jenkins::wrkspuser: wrkspuser
-workspaces::jenkins::wrksppassword: password
+
+workspaces::jenkins::static_users:
+  - user: admin
+    pass: santafe7
+  - user: wrkspuser
+    pass: password
 
 workspaces::jenkins::adminusers:
   - admin
