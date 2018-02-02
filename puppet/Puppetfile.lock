@@ -68,7 +68,7 @@ GIT
 GIT
   remote: https://github.com/EuPathDB/puppet-workspaces.git
   ref: master
-  sha: 30d4ebf3e38bd0c967c86ea4f1b06de71fb09675
+  sha: 7ced0620a6df52348b6eabba36b934ca2189d6e8
   specs:
     ebrc-workspaces (0.1.0)
       puppetlabs-stdlib (>= 1.0.0)
