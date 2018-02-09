@@ -33,6 +33,7 @@ irods::globals::provider_admin_pass: passWORD
 irods::globals::srv_negotiation_key: fbb4c4fd185e3a98f8715ff5c1c86715
 irods::globals::ctrl_plane_key: ca2ad0abf0faa703cf0829af99465ac9
 irods::globals::srv_zone_key: e83ac54fe6d5d66f24d16644ce72d9ae
+irods::globals::core_version: 4.2.2
 
 irods::rest_api::irods_host: wij.vm
 irods::rest_api::irods_port: 1247

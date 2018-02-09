@@ -60,7 +60,7 @@ GIT
 GIT
   remote: https://github.com/EuPathDB/puppet-irods.git
   ref: irods4.2
-  sha: 0ca705caabd77f2522e4864d7028a50bfe9ff50a
+  sha: d2195bbcfd663ac6a064901ca4ac7134acd4ff32
   specs:
     ebrc-irods (0.1.0)
       puppetlabs-stdlib (>= 1.0.0)
