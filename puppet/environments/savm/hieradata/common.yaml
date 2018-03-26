@@ -3,7 +3,7 @@ ebrc_jenkins::user_home: /usr/local/home/jenkins
 ebrc_jenkins::truststore: "%{hiera('ebrc_java::truststore')}"
 ebrc_jenkins::instances:
   WS:
-    version: 2.68
+    version: 2.112
     http_port: 9171
     jmx_port:  9110
 
@@ -38,7 +38,7 @@ irods::globals::core_version: 4.2.2
 irods::rest_api::irods_host: wij.vm
 irods::rest_api::irods_port: 1247
 irods::rest_api::irods_zone: ebrc
-irods::rest_api::default_storage_resource: ebrcResc
+irods::rest_api::default_storage_resource: stageResc
 irods::rest_api::extra_docker_args:
     hostentries: "wij.vm:%{facts.ipaddress_enp0s8}"
 docker::bip: 192.0.3.1/24
@@ -76,12 +76,17 @@ workspaces::svn_files::checkout_revision: HEAD
 
 irods::icommands:
   - { exec: mkresc, resc: ebrcResc, type: passthru }
-  - { exec: mkresc, resc: rr1Resc, type: roundrobin }
-  - { exec: mkresc, resc: data_7k_001, type: unixfilesystem, path: 'wij.vm:/srv/irods/vault_7k_001' }
-  - { exec: mkresc, resc: data_7k_002, type: unixfilesystem, path: 'wij.vm:/srv/irods/vault_7k_002' }
-  - { exec: addchildtoresc, resc: rr1Resc, chld: data_7k_001 }
-  - { exec: addchildtoresc, resc: rr1Resc, chld: data_7k_002 }
-  - { exec: addchildtoresc, resc: ebrcResc, chld: rr1Resc }
+  - { exec: mkresc, resc: wrkspReplResc, type: replication }
+  - { exec: mkresc, resc: wrkspN1Resc, type: unixfilesystem, path: 'wij.vm:/srv/irods/wrkspN' }
+  - { exec: mkresc, resc: wrkspS1Resc, type: unixfilesystem, path: 'wij.vm:/srv/irods/wrkspS' }
+  - { exec: addchildtoresc, resc: wrkspReplResc, chld:  wrkspN1Resc }
+  - { exec: addchildtoresc, resc: wrkspReplResc, chld:  wrkspS1Resc }
+  - { exec: addchildtoresc, resc: ebrcResc, chld: wrkspReplResc }
+  - { exec: mkresc, resc: stageResc, type: roundrobin }
+  - { exec: mkresc, resc: stageResc1, type: unixfilesystem, path: 'wij.vm:/srv/irods/stageResc1' }
+  - { exec: mkresc, resc: stageResc2, type: unixfilesystem, path: 'wij.vm:/srv/irods/stageResc2' }
+  - { exec: addchildtoresc, resc: stageResc, chld: stageResc1 }
+  - { exec: addchildtoresc, resc: stageResc, chld: stageResc2 }
   - { exec: mkuser, user: wrkspuser, type: rodsuser, password: passWORD }
   - { exec: mkuser, user: mheiges,   type: rodsuser, password: passWORD }
   - { exec: mkgroup, group: wrkspGroup }
