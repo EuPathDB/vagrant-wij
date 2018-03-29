@@ -70,6 +70,9 @@ workspaces::jenkins::nodes:
 #    host: localhost
 #    label: irods-south
 
+workspaces::jenkins::notification_email: joe@example.com
+workspaces::jenkins::notification_sender_email: jill@example.com
+
 workspaces::svn_files::checkout_location: /vagrant/scratch/svn_files
 workspaces::svn_files::checkout_revision: HEAD
 
