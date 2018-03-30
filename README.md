@@ -213,3 +213,10 @@ Notes/Issues
     should go.
   - Scripts must be approved at http://wij.vm:9171/scriptApproval/ There is
     only one currently, but I have not found an elegant way to auto-approve it.
+  - This uses the eupathdb puppet-workspaces module, which has parameters to
+    set the email addresses in jenkins.  If you would like to recieve email,
+    update the following in `puppet/environments/savm/hieradata/common.yaml`
+        workspaces::jenkins::notification_email: joe@example.com
+        workspaces::jenkins::notification_sender_email: jill@example.com
+    and re-run `vagrant provision` if it wasn't set before.
+
