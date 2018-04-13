@@ -76,6 +76,7 @@ workspaces::jenkins::notification_sender_email: jill@example.com
 workspaces::svn_files::checkout_location: /vagrant/scratch/svn_files
 workspaces::svn_files::checkout_revision: HEAD
 
+workspaces::cron_enable: false
 
 irods::icommands:
   - { exec: mkresc, resc: ebrcResc, type: passthru }
