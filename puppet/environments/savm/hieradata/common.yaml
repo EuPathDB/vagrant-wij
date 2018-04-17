@@ -52,6 +52,7 @@ irods::provider::re_rulebase_set: ['ud', 'ebrc', 'core']
 
 workspaces::jenkins::url: http://wij.vm:9171
 workspaces::jenkins::wrkspuser: wrkspuser
+workspaces::jenkins::svn_build_poll: false
 
 workspaces::jenkins::static_users:
   - user: admin
