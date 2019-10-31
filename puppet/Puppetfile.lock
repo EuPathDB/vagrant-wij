@@ -50,9 +50,9 @@ GIT
     ebrc-ebrc_maven (0.1.0)
 
 GIT
-  remote: https://github.com/EuPathDB/puppet-ebrc_yum_repo.git
+  remote: git@git.apidb.org:puppet-ebrc_yum_repo
   ref: master
-  sha: 2e75a0de6b7e4da022a1a4de7ee5306b5fcc0a4d
+  sha: 1abc3ef60d2a19d5364586785025d7080be61ac8
   specs:
     ebrc-ebrc_yum_repo (0.1.0)
       puppetlabs-stdlib (>= 1.0.0)
